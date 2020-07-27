@@ -4,7 +4,6 @@ import pickle
 import codecs
 
 def zero_digits(s):
-
     return re.sub('\d', '0', s)
 
 def load_sentences(path,zeros):
