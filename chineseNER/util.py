@@ -48,17 +48,22 @@ def split_sent_label(data):
         labels.append(sent)
     return sents, labels
 
-def build_vocab(sents, vocab_path):
-    vocab = []
+def build_vocab(sents, vocab_path, maxlen):
+    vocab = {}
     for i in sents:
-        vocab+= i
-    vocab = set(vocab)
+        for j in i:
+            if j in vocab:
+                vocab[j]+=1
+            else:
+                vocab[j] = 1
+    vocab = {x:y for x,y in vocab.items() if y>=maxlen}
+
     vocab_dict = {}
-    for i,j in enumerate(vocab):
+    for i,j in enumerate(vocab.keys()):
         vocab_dict[j] = i
     with open(vocab_path, 'wb') as f:
         pickle.dump(vocab_dict,f)
-    return vocab_dict
+    return vocab,vocab_dict
 
 
 if __name__ == '__main__':
@@ -66,4 +71,4 @@ if __name__ == '__main__':
     data = load_sentences(path,0)
     sents, labels = split_sent_label(data)
     vocab_path = os.path.join(os.getcwd(),'configs','vocab.pickle')
-    vocab_dict = build_vocab(sents, vocab_path)
+    vocab,vocab_dict = build_vocab(sents, vocab_path, maxlen=5)
